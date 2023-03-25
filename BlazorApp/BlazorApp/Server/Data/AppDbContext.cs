@@ -1,5 +1,8 @@
 ﻿using BlazorApp.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Npgsql.NameTranslation;
+using System;
 
 namespace BlazorApp.Server.Data
 {

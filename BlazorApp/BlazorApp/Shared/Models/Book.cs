@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BlazorApp.Shared.Models
 {
+    [Table("book")]
     public class Book
     {
+        [Column("book_id")]
         public int BookId { get; set; }
+        [Column("title")]
         public string Title { get; set; }
+        [Column("author")]
         public string Author { get; set; }
 
         public Book(int bookId, string title, string author)
