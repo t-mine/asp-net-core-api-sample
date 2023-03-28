@@ -1,0 +1,44 @@
+﻿@page "/booklist"
+@using BlazorApp.Shared.Models
+@inject HttpClient Http
+
+@if (books == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <Table TItem="Book" DataSource="@books">
+        <Column @bind-Field="@context.BookId" Title="ID">
+            <Button Type="link" OnClick="() => OpenDetailModal(context.BookId)">@context.BookId</Button>
+        </Column>
+        <Column @bind-Field="@context.Title" />
+        <Column @bind-Field="@context.Author" />
+    </Table>
+
+    <Modal Title="Detail" Visible="@showDetailModal" OnCancel="@CloseModal" Footer="@null">
+        <BookDetail Book="@book"></BookDetail>
+    </Modal>
+}
+
+@code {
+    private List<Book>? books;
+    private Book? book;
+    private bool showDetailModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await Http.GetFromJsonAsync<List<Book>>("api/book");
+    }
+
+    public async Task OpenDetailModal(int id)
+    {
+        book = await Http.GetFromJsonAsync<Book>($"api/book/{id}");
+        showDetailModal = true;
+    }
+
+    public void CloseModal()
+    {
+        showDetailModal = false;
+    }
+}
