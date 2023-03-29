@@ -36,5 +36,19 @@ namespace BlazorApp.Server.Controllers
 
             return Ok(book);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Book>> CreateAsync(Book book)
+        {
+            if (book.BookId != 0)
+            {
+                return BadRequest();
+            }
+
+            context.Books.Add(book);
+            await context.SaveChangesAsync();
+
+            return CreatedAtAction("Get", new { id = book.BookId }, book);
+        }
     }
 }

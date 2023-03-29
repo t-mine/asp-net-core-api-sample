@@ -8,6 +8,9 @@
 }
 else
 {
+    <Button Type="primary" OnClick="OpenCreateModal" Block>New Book</Button>
+    <Divider></Divider>
+
     <Table TItem="Book" DataSource="@books">
         <Column @bind-Field="@context.BookId" Title="ID">
             <Button Type="link" OnClick="() => OpenDetailModal(context.BookId)">@context.BookId</Button>
@@ -19,12 +22,17 @@ else
     <Modal Title="Detail" Visible="@showDetailModal" OnCancel="@CloseModal" Footer="@null">
         <BookDetail Book="@book"></BookDetail>
     </Modal>
+
+    <Modal Title="Create" Visible="@showCreateModal" OnCancel="@CloseModal" Footer="@null">
+        <BookCreate Book="@book" Callback="@OnCallback"></BookCreate>
+    </Modal>
 }
 
 @code {
     private List<Book>? books;
     private Book? book;
     private bool showDetailModal = false;
+    private bool showCreateModal = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,5 +48,18 @@ else
     public void CloseModal()
     {
         showDetailModal = false;
+        showCreateModal = false;
+    }
+
+    private void OpenCreateModal()
+    {
+        book = new(0, "", "");
+        showCreateModal = true;
+    }
+
+    private async Task OnCallback()
+    {
+        books = await Http.GetFromJsonAsync<List<Book>>("api/book");
+        showCreateModal = false;
     }
 }
