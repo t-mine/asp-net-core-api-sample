@@ -17,6 +17,11 @@ else
         </Column>
         <Column @bind-Field="@context.Title" />
         <Column @bind-Field="@context.Author" />
+        <ActionColumn>
+            <Popconfirm Title="本当に削除しますか？" OkText="はい" CancelText="いいえ" OnConfirm="() => Delete(context.BookId)">
+                <Button Danger>Delete</Button>
+            </Popconfirm>
+        </ActionColumn>
     </Table>
 
     <Modal Title="Detail" Visible="@showDetailModal" OnCancel="@CloseModal" Footer="@null">
@@ -61,5 +66,11 @@ else
     {
         books = await Http.GetFromJsonAsync<List<Book>>("api/book");
         showCreateModal = false;
+    }
+
+    public async Task Delete(int bookId)
+    {
+        await Http.DeleteAsync($"api/book/{bookId}");
+        books = await Http.GetFromJsonAsync<List<Book>>("api/book");
     }
 }

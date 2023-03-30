@@ -50,5 +50,22 @@ namespace BlazorApp.Server.Controllers
 
             return CreatedAtAction("Get", new { id = book.BookId }, book);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync(int id)
+        {
+            var book = await context.Books.SingleOrDefaultAsync(b => b.BookId.Equals(id));
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            context.Books.Remove(book);
+            await context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }
