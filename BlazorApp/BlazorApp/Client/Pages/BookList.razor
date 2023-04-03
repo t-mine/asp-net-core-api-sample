@@ -18,6 +18,9 @@ else
         <Column @bind-Field="@context.Title" />
         <Column @bind-Field="@context.Author" />
         <ActionColumn>
+            <Button OnClick="() => OpenEditModal(context.BookId)">Edit</Button>
+        </ActionColumn>
+        <ActionColumn>
             <Popconfirm Title="本当に削除しますか？" OkText="はい" CancelText="いいえ" OnConfirm="() => Delete(context.BookId)">
                 <Button Danger>Delete</Button>
             </Popconfirm>
@@ -31,6 +34,10 @@ else
     <Modal Title="Create" Visible="@showCreateModal" OnCancel="@CloseModal" Footer="@null">
         <BookCreate Book="@book" Callback="@OnCallback"></BookCreate>
     </Modal>
+
+    <Modal Title="Edit" Visible="@showEditModal" OnCancel="@CloseModal" Footer="@null">
+        <BookEdit Book="@book" Callback="@OnCallback"></BookEdit>
+    </Modal>
 }
 
 @code {
@@ -38,6 +45,7 @@ else
     private Book? book;
     private bool showDetailModal = false;
     private bool showCreateModal = false;
+    private bool showEditModal = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,6 +62,7 @@ else
     {
         showDetailModal = false;
         showCreateModal = false;
+        showEditModal = false;
     }
 
     private void OpenCreateModal()
@@ -66,11 +75,18 @@ else
     {
         books = await Http.GetFromJsonAsync<List<Book>>("api/book");
         showCreateModal = false;
+        showEditModal = false;
     }
 
     public async Task Delete(int bookId)
     {
         await Http.DeleteAsync($"api/book/{bookId}");
         books = await Http.GetFromJsonAsync<List<Book>>("api/book");
+    }
+
+    private async Task OpenEditModal(int id)
+    {
+        book = await Http.GetFromJsonAsync<Book>($"api/book/{id}");
+        showEditModal = true;
     }
 }

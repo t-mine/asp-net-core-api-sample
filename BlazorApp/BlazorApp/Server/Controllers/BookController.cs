@@ -67,5 +67,19 @@ namespace BlazorApp.Server.Controllers
             return NoContent();
         }
 
+        [HttpPut]
+        public async Task<ActionResult> Update(Book book)
+        {
+            // AsNoTracking：レコードをロックしないで取得する。ってか、これつけないとロックするのかな。。
+            if (await context.Books.AsNoTracking().SingleOrDefaultAsync(b => b.BookId == book.BookId) == null)
+            {
+                return NotFound();
+            }
+
+            context.Entry(book).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return NoContent();
+        }
+
     }
 }
